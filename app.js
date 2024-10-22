@@ -2,10 +2,21 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser')
+const db = require('./utils/database')
 
 const adminRoutes = require('./routes/admin')
 const tiendaRoutes = require('./routes/tienda')
 const errorController = require('./controllers/error')
+
+db.execute('SELECT * FROM productos')
+    .then(resultado => {
+        // console.log(resultado);
+        console.log(resultado[0]);
+    })
+    .catch(err => {
+        console.log(err);
+    })
+
 
 const app = express();
 
