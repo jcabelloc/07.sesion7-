@@ -2,15 +2,16 @@ const Producto = require('../models/producto');
 const Carrito = require('../models/carrito');
 
 exports.getProductos = (req, res) => {
-    let productos = [];
-    Producto.fetchAll(productosObtenidos => {
-        productos = productosObtenidos;
-        res.render('tienda/lista-productos', {
-            prods: productos,
-            titulo: "Productos de la tienda",
-            path: "/productos"
-        });
-    })
+    Producto.fetchAll()
+        .then(([filas, dataCampos]) => {
+            res.render('tienda/lista-productos', {
+                prods: filas,
+                titulo: "Productos de la tienda",
+                path: "/productos"
+            });
+        })
+        .catch(err => console.log(err));
+
 };
 
 exports.getProducto = (req, res) => {
@@ -26,13 +27,15 @@ exports.getProducto = (req, res) => {
 }
 
 exports.getIndex = (req, res) => {
-    Producto.fetchAll(productos => {
+    Producto.fetchAll()
+    .then(([filas, dataCampos]) => {
         res.render('tienda/index', {
-            prods: productos,
+            prods: filas,
             titulo: "Pagina principal de la Tienda",
             path: "/"
         });
     })
+    .catch(err => console.log(err));
 }
 
 exports.getCarrito = (req, res, next) => {
