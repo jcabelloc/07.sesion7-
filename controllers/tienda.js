@@ -16,26 +16,28 @@ exports.getProductos = (req, res) => {
 
 exports.getProducto = (req, res) => {
     const idProducto = req.params.idProducto;
-    Producto.findById(idProducto, (producto) => {
-        res.render('tienda/detalle-producto', {
-            producto: producto,
-            titulo: producto.nombre,
-            path: '/productos'
-        });
-
-    })
+    Producto.findById(idProducto)
+        .then(([productos]) => {
+            const producto = productos[0];
+            res.render('tienda/detalle-producto', {
+                producto: producto,
+                titulo: producto.nombre,
+                path: '/productos'
+            });
+        })
+        .catch(err => console.log(err));
 }
 
 exports.getIndex = (req, res) => {
     Producto.fetchAll()
-    .then(([filas, dataCampos]) => {
-        res.render('tienda/index', {
-            prods: filas,
-            titulo: "Pagina principal de la Tienda",
-            path: "/"
-        });
-    })
-    .catch(err => console.log(err));
+        .then(([filas, dataCampos]) => {
+            res.render('tienda/index', {
+                prods: filas,
+                titulo: "Pagina principal de la Tienda",
+                path: "/"
+            });
+        })
+        .catch(err => console.log(err));
 }
 
 exports.getCarrito = (req, res, next) => {
