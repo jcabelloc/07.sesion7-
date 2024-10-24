@@ -1,8 +1,8 @@
 const Producto = require('../models/producto');
 
 exports.getCrearProducto = (req, res) => {
-    res.render('admin/editar-producto', { 
-        titulo: 'Crear Producto', 
+    res.render('admin/editar-producto', {
+        titulo: 'Crear Producto',
         path: '/admin/crear-producto',
         modoEdicion: false
     })
@@ -14,18 +14,19 @@ exports.postCrearProducto = (req, res) => {
     const urlImagen = req.body.urlImagen;
     const precio = req.body.precio;
     const descripcion = req.body.descripcion;
-    Producto.create({
-        nombre: nombre,
-        precio: precio,
-        urlImagen: urlImagen,
-        descripcion: descripcion  
-    })
+    req.usuario
+        .createProducto({
+            nombre: nombre,
+            precio: precio,
+            urlImagen: urlImagen,
+            descripcion: descripcion
+        })
         .then(
             result => {
                 console.log(result);
                 res.redirect('/');
-        })
-        .catch(err => console.log(err));    
+            })
+        .catch(err => console.log(err));
 };
 
 exports.getEditarProducto = (req, res) => {
@@ -37,8 +38,8 @@ exports.getEditarProducto = (req, res) => {
             if (!producto) {
                 return res.redirect('/');
             }
-            res.render('admin/editar-producto', { 
-                titulo: 'Editar Producto', 
+            res.render('admin/editar-producto', {
+                titulo: 'Editar Producto',
                 path: '/admin/editar-producto',
                 producto: producto,
                 modoEdicion: true,
@@ -67,22 +68,22 @@ exports.postEditarProducto = (req, res, next) => {
             res.redirect('/admin/productos');
         })
         .catch(err => console.log(err));
-    
-  };
+
+};
 
 
 
 exports.getProductos = (req, res) => {
-    Producto.findAll()
+    req.usuario.getProductos()
         .then(productos => {
             res.render('admin/productos', {
                 prods: productos,
-                titulo: "Administracion de Productos", 
+                titulo: "Administracion de Productos",
                 path: "/admin/productos"
             });
 
         })
-        .catch(err => console.log(err));    
+        .catch(err => console.log(err));
 };
 
 exports.postEliminarProducto = (req, res, next) => {
@@ -95,5 +96,5 @@ exports.postEliminarProducto = (req, res, next) => {
             console.log('Producto eliminado satisfactoriamente');
             res.redirect('/admin/productos');
         })
-        .catch(err => console.log(err));    
-  };
+        .catch(err => console.log(err));
+};
