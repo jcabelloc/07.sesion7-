@@ -20,6 +20,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use((req, res, next) => {
+    Usuario.findByPk(1)
+        .then(usuario => {
+            req.usuario = usuario;
+            next();
+        })
+        .catch(err => console.log(err));
+})
 
 app.use('/admin', adminRoutes);
 app.use(tiendaRoutes);
@@ -36,7 +44,16 @@ Usuario.hasMany(Producto);
 sequelize
     .sync()
     .then(result => {
-        console.log(result);
+        return Usuario.findByPk(1);
+    })
+    .then(usuario => {
+        if (!usuario) {
+            // Crear el usuario
+            return Usuario.create({ nombre: 'Juan', email: 'juan@gmail.com' });
+        }
+        return usuario
+    })
+    .then(usuario => {
         app.listen(3000);
     })
     .catch(err => console.log(err));
