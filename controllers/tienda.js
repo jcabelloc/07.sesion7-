@@ -113,8 +113,47 @@ exports.postEliminarProductoCarrito = (req, res, next) => {
 };
 
 exports.getPedidos = (req, res, next) => {
-    res.render('tienda/pedidos', {
-        path: '/pedidos',
-        titulo: 'Mis Pedidos'
-    });
+    req.usuario
+        .getPedidos({include: ['productos']})
+        .then(pedidos => {
+            res.render('tienda/pedidos', {
+                path: '/pedidos',
+                titulo: 'Mis Pedidos',
+                pedidos: pedidos
+            });
+        })
+        .catch(err => console.log(err));
+
+
 };
+
+
+exports.postPedido = (req, res, next) => {
+    let micarrito;
+    req.usuario
+      .getCarrito()
+      .then(carrito => {
+        micarrito = carrito;
+        return carrito.getProductos();
+      })
+      .then(productos => {
+        return req.usuario
+          .createPedido()
+          .then(pedido => {
+            return pedido.addProductos(
+              productos.map(producto => {
+                producto.pedidoItem = { cantidad: producto.carritoItem.cantidad };
+                return producto;
+              })
+            );
+          })
+          .catch(err => console.log(err));
+      })
+      .then(result => {
+        return micarrito.setProductos(null);
+      })
+      .then(result => {
+        res.redirect('/pedidos');
+      })
+      .catch(err => console.log(err));
+  };

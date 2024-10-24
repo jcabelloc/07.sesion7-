@@ -9,8 +9,10 @@ const errorController = require('./controllers/error');
 const sequelize = require('./utils/database');
 const Producto = require('./models/producto');
 const Usuario = require('./models/usuario');
-const Carrito = require('./models/carrito')
-const CarritoItem = require('./models/carritoitem')
+const Carrito = require('./models/carrito');
+const CarritoItem = require('./models/carritoitem');
+const Pedido = require('./models/pedido');
+const PedidoItem = require('./models/pedidoitem');
 
 const app = express();
 
@@ -46,6 +48,11 @@ Usuario.hasOne(Carrito);
 Carrito.belongsTo(Usuario);
 Carrito.belongsToMany(Producto, { through: CarritoItem });
 Producto.belongsToMany(Carrito, { through: CarritoItem });
+
+Pedido.belongsTo(Usuario);
+Usuario.hasMany(Pedido);
+Pedido.belongsToMany(Producto, { through: PedidoItem });
+
 
 
 sequelize

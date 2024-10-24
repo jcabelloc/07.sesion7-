@@ -4,6 +4,20 @@
     <body>
         <%- include('../includes/navigation.ejs') %>
         <main>
-            <h1>Aun nada aqui!</h1>
-        </main>
+            <% if (pedidos.length == 0) { %>
+                <h1>No ha realizado pedidos</h1>
+            <% } else { %>
+                <ul>
+                    <% pedidos.forEach(pedido => { %>
+                        <li>
+                            <h1># <%= pedido.id %></h1>
+                            <ul>
+                                <% pedido.productos.forEach(producto => { %>
+                                    <li><%= producto.nombre %> (<%= producto.pedidoItem.cantidad %>)</li>
+                                <% }); %>
+                            </ul>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } %>        </main>
         <%- include('../includes/end.ejs') %>
