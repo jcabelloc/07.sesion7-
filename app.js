@@ -62,6 +62,9 @@ sequelize
         return usuario
     })
     .then(usuario => {
+        return usuario.createCarrito();
+    })
+    .then(carrito => {
         app.listen(3000);
     })
     .catch(err => console.log(err));
