@@ -54,15 +54,20 @@ exports.postEditarProducto = (req, res, next) => {
     const precio = req.body.precio;
     const urlImagen = req.body.urlImagen;
     const descripcion = req.body.descripcion;
-    const productoActualizado = new Producto(
-      idProducto,
-      nombre,
-      urlImagen,
-      descripcion,
-      precio
-    );
-    productoActualizado.save();
-    res.redirect('/admin/productos');
+    Producto.findByPk(idProducto)
+        .then(producto => {
+            producto.nombre = nombre;
+            producto.precio = precio;
+            producto.urlImagen = urlImagen;
+            producto.descripcion = descripcion;
+            return producto.save();
+        })
+        .then(result => {
+            console.log('Producto actualizado satisfactoriamente');
+            res.redirect('/admin/productos');
+        })
+        .catch(err => console.log(err));
+    
   };
 
 
@@ -82,6 +87,13 @@ exports.getProductos = (req, res) => {
 
 exports.postEliminarProducto = (req, res, next) => {
     const idProducto = req.body.idProducto;
-    Producto.deleteById(idProducto);
-    res.redirect('/admin/productos');
+    Producto.findByPk(idProducto)
+        .then(producto => {
+            return producto.destroy();
+        })
+        .then(result => {
+            console.log('Producto eliminado satisfactoriamente');
+            res.redirect('/admin/productos');
+        })
+        .catch(err => console.log(err));    
   };
