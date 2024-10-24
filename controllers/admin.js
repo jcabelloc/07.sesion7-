@@ -32,18 +32,19 @@ exports.getEditarProducto = (req, res) => {
 
     const modoEdicion = req.query.editar;
     const idProducto = req.params.idProducto;
-    Producto.findById(idProducto, producto => {
-        console.log(producto)
-        if (!producto) {
-            return res.redirect('/');
-        }
-        res.render('admin/editar-producto', { 
-            titulo: 'Editar Producto', 
-            path: '/admin/editar-producto',
-            producto: producto,
-            modoEdicion: true,
+    Producto.findByPk(idProducto)
+        .then(producto => {
+            if (!producto) {
+                return res.redirect('/');
+            }
+            res.render('admin/editar-producto', { 
+                titulo: 'Editar Producto', 
+                path: '/admin/editar-producto',
+                producto: producto,
+                modoEdicion: true,
+            })
         })
-    })
+        .catch(err => console.log(err));
 }
 
 
@@ -67,18 +68,16 @@ exports.postEditarProducto = (req, res, next) => {
 
 
 exports.getProductos = (req, res) => {
-    let productos = [];
-    Producto.fetchAll(productosObtenidos => {
-        productos = productosObtenidos;
+    Producto.findAll()
+        .then(productos => {
+            res.render('admin/productos', {
+                prods: productos,
+                titulo: "Administracion de Productos", 
+                path: "/admin/productos"
+            });
 
-        res.render('admin/productos', {
-            prods: productos,
-            titulo: "Administracion de Productos", 
-            path: "/admin/productos"
-        });
-    })
-
-
+        })
+        .catch(err => console.log(err));    
 };
 
 exports.postEliminarProducto = (req, res, next) => {
