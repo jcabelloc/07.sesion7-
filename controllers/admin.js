@@ -14,16 +14,18 @@ exports.postCrearProducto = (req, res) => {
     const urlImagen = req.body.urlImagen;
     const precio = req.body.precio;
     const descripcion = req.body.descripcion;
-
-    const producto = new Producto(null, nombre, urlImagen, descripcion, precio);
-
-    producto.save()
-        .then(() => {
-            res.redirect('/')
+    Producto.create({
+        nombre: nombre,
+        precio: precio,
+        urlImagen: urlImagen,
+        descripcion: descripcion  
+    })
+        .then(
+            result => {
+                console.log(result);
+                res.redirect('/');
         })
-        .catch(err => console.log(err));
-
-    
+        .catch(err => console.log(err));    
 };
 
 exports.getEditarProducto = (req, res) => {
